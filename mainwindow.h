@@ -1,6 +1,11 @@
 #pragma once
 
 #include <QtWidgets/QMainWindow>
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QImageReader>
+#include "image_display_widget.h"
+#include "preloader.h"
 #include "ui_mainwindow.h"
 
 class MainWindow : public QMainWindow
@@ -9,8 +14,23 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = Q_NULLPTR);
-
+private slots:
+	void fileMissingSlot(const QString& missingFile);
+	void jsonErrorSlot(const QString& error);
+	void openFileActionTriggered();
+signals:
+	void loadImageSignal(const QString& fileName);
 private:
-	QWidget* m_imageWidget;
+	void renderUi(const QString& type);
+private:
+	PreLoader* preLoader_;
+	ImageDisplayWidget* imageWidget_;
     Ui::MainWindowClass ui;
+	QMenu* fileMenu_;
+	QAction* openFileAction_;
+	QAction* saveAction_;
+	QAction* saveAsAction_;
+
+	QAction* helpAction_;
+	QAction* donateAction_;
 };

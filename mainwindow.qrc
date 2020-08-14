@@ -5,5 +5,6 @@
     <qresource prefix="/ui_prefile">
         <file>asserts/json/en.json</file>
         <file>asserts/json/zh_CN.json</file>
+        <file>asserts/json/setting.json</file>
     </qresource>
 </RCC>
