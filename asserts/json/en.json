@@ -1,0 +1,14 @@
+{
+    "title": "drawing",
+    "menuBar": {
+        "open": {
+            "file":"file"
+        },
+        "save":{
+            "save":"save",
+            "saveAs":"save as"
+        },
+        "help":"help",
+        "donate":"donate"
+    }
+}

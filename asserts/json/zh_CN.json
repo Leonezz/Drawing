@@ -1,0 +1,14 @@
+{
+    "title": "绘图",
+    "menuBar": {
+        "open": {
+            "file":"文件"
+        },
+        "save":{
+            "save":"保存",
+            "saveAs":"另存为"
+        },
+        "help":"帮助",
+        "donate":"捐赠"
+    }
+}
