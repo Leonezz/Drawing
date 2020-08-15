@@ -23,8 +23,11 @@ signals:
 	void fileMissingSignal(const QString& fileName);
 	void jsonErrorSignal(const QString& error)const;
 private:
+	void getLanguage();
+	static void setLanguage();
+private:
 	static PreLoader* instance_;
-	PreLoader(const QString& type);
+	PreLoader();
 	QJsonObject* preSetting_;
 	static QString type_;
 };

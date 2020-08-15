@@ -13,9 +13,9 @@ const QString PreLoader::querry(const QString& key) const
 	}
 	return obj.value(keys.last()).toString();
 }
-PreLoader::PreLoader(const QString& type)
+PreLoader::PreLoader()
 {
-	this->type_ = type;
+	getLanguage();
 	preSetting_ = new QJsonObject();
 	const QString fileName = QString(":/ui_prefile/asserts/json/%1.json").arg(this->type_);
 	QFile jsonFile(fileName);
@@ -32,15 +32,56 @@ PreLoader::PreLoader(const QString& type)
 			emit jsonErrorSignal(jsonError.errorString());
 	}
 }
-
+void PreLoader::getLanguage()
+{
+	QFile file("./asserts/json/setting.json");
+	if (!file.open(QIODevice::ReadOnly))
+		type_ = "zh_CN";
+	else
+	{
+		QByteArray data = file.readAll();
+		file.close();
+		QJsonParseError error;
+		QJsonDocument jsonDoc(QJsonDocument::fromJson(data, &error));
+		if (error.error != QJsonParseError::NoError)
+			type_ = "zh_CN";
+		else
+			type_ = jsonDoc.object().value("language").toString();
+	}
+}
+void PreLoader::setLanguage()
+{
+	QFile file("./asserts/json/setting.json");
+	if (!file.open(QIODevice::ReadWrite))
+		return;
+	else
+	{
+		QByteArray data = file.readAll();
+		QJsonParseError error;
+		QJsonDocument jsonDoc(QJsonDocument::fromJson(data, &error));
+		if (error.error != QJsonParseError::NoError)
+			return;
+		else 
+		{
+			QJsonObject obj = jsonDoc.object();
+			obj.insert(u"language", type_);
+			file.close();
+			file.open(QIODevice::WriteOnly);
+			file.write(QJsonDocument(obj).toJson());
+		}
+		file.close();
+	}
+}
 PreLoader* PreLoader::getInstance(const QString& type)
 {
-	if (instance_ == nullptr) 
-		instance_ = new PreLoader(type_);
-	else if (type != type_) {
+	if (type != type_) {
+		type_ = type;
+		setLanguage();
 		delete instance_;
-		instance_ = new PreLoader(type_);
+		instance_ = new PreLoader();
 	}
+	else if (instance_ == nullptr) 
+		instance_ = new PreLoader();
 	return instance_;
 }
 

@@ -18,6 +18,7 @@ private slots:
 	void fileMissingSlot(const QString& missingFile);
 	void jsonErrorSlot(const QString& error);
 	void openFileActionTriggered();
+	void languageActionTriggered();
 signals:
 	void loadImageSignal(const QString& fileName);
 private:
@@ -33,4 +34,6 @@ private:
 
 	QAction* helpAction_;
 	QAction* donateAction_;
+
+	QAction* languageAction_;
 };

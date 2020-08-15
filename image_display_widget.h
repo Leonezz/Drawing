@@ -22,8 +22,5 @@ protected:
 private:
 	QImage image_;
 	QImageReader reader_;
-	int width_;
-	int height_;
-	int bandNum_;
 };
 

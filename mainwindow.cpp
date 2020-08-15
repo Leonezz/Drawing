@@ -4,6 +4,9 @@ MainWindow::MainWindow(QWidget* parent)
 	: QMainWindow(parent)
 {
 	ui.setupUi(this);
+
+	this->setWindowTitle("Drawing");
+
 	this->preLoader_ = PreLoader::getInstance("zh_CN");
 	this->imageWidget_ = new ImageDisplayWidget();
 	this->ui.scrollArea->setWidget(imageWidget_);
@@ -14,6 +17,21 @@ MainWindow::MainWindow(QWidget* parent)
 		this, &MainWindow::fileMissingSlot);
 	QObject::connect(this->preLoader_, &PreLoader::jsonErrorSignal,
 		this, &MainWindow::jsonErrorSlot);
+
+	this->fileMenu_ = new QMenu();
+	this->openFileAction_ = new QAction();
+	this->saveAction_ = new QAction();
+	this->saveAsAction_ = new QAction();
+	this->fileMenu_->addActions({ this->openFileAction_,this->saveAction_,this->saveAsAction_ });
+	this->menuBar()->addMenu(fileMenu_);
+	this->helpAction_ = new QAction();
+	this->donateAction_ = new QAction();
+	this->languageAction_ = new QAction();
+	this->menuBar()->addActions({ this->helpAction_,this->donateAction_ ,this->languageAction_ });
+	QObject::connect(this->openFileAction_, &QAction::triggered,
+		this, &MainWindow::openFileActionTriggered);
+	QObject::connect(this->languageAction_, &QAction::triggered,
+		this, &MainWindow::languageActionTriggered);
 	this->renderUi("zh_CN");
 
 }
@@ -44,29 +62,25 @@ void MainWindow::openFileActionTriggered()
 		emit loadImageSignal(filePath);
 }
 
+void MainWindow::languageActionTriggered()
+{
+	const QString language = this->languageAction_->text();
+	if (language == "中文")
+		this->renderUi("en");
+	else this->renderUi("zh_CN");
+}
+
 
 
 void MainWindow::renderUi(const QString& type)
 {
 	this->preLoader_ = PreLoader::getInstance(type);
-	this->fileMenu_ = new QMenu();
 	this->fileMenu_->setTitle(this->preLoader_->querry("menu->file->value"));
-	this->openFileAction_ = new QAction();
 	this->openFileAction_->setText(this->preLoader_->querry("menu->file->open"));
-	this->saveAction_ = new QAction();
 	this->saveAction_->setText(this->preLoader_->querry("menu->file->save"));
-	this->saveAsAction_ = new QAction();
 	this->saveAsAction_->setText(this->preLoader_->querry("menu->file->saveAs"));
-	this->fileMenu_->addActions({ this->openFileAction_,this->saveAction_,this->saveAsAction_ });
-	this->menuBar()->addMenu(fileMenu_);
-
-	this->helpAction_ = new QAction();
 	this->helpAction_->setText(this->preLoader_->querry("menu->help"));
-	this->donateAction_ = new QAction();
 	this->donateAction_->setText(this->preLoader_->querry("menu->donate"));
-	this->menuBar()->addActions({ this->helpAction_,this->donateAction_ });
-
-	QObject::connect(this->openFileAction_, &QAction::triggered,
-		this, &MainWindow::openFileActionTriggered);
+	this->languageAction_->setText(this->preLoader_->querry("menu->language"));
 }
 
