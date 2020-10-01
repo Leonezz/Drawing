@@ -87,6 +87,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="image_display_widget.cpp" />
+    <ClCompile Include="logger.cpp" />
     <ClCompile Include="preloader.cpp" />
     <QtRcc Include="mainwindow.qrc" />
     <QtUic Include="mainwindow.ui" />
@@ -99,6 +100,9 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="image_display_widget.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="logger.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

@@ -1,11 +1,11 @@
 #include "mainwindow.h"
-
+#include "logger.h"
 MainWindow::MainWindow(QWidget* parent)
 	: QMainWindow(parent)
 {
 	ui.setupUi(this);
 
-	this->setWindowTitle("Drawing");
+	this->setWindowTitle("Drawingzhan");
 
 	this->preLoader_ = PreLoader::getInstance("zh_CN");
 	this->imageWidget_ = new ImageDisplayWidget();
@@ -34,6 +34,13 @@ MainWindow::MainWindow(QWidget* parent)
 		this, &MainWindow::languageActionTriggered);
 	this->renderUi("zh_CN");
 
+	Logger& logger = Logger::getInstance();
+	logger.info("this is an info msg");
+	logger.warning("this is a warning msg");
+	logger.debug("this is a debug msg");
+	logger.error("this is an error msg");
+	logger.fatal("this is a fatal msg");
+	
 }
 
 void MainWindow::fileMissingSlot(const QString& missingFile)
