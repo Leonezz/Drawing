@@ -1,4 +1,4 @@
-#include "logger.h"
+#include "../header/logger.h"
 
 logFile::logFile(const QString&& fileName)
 {

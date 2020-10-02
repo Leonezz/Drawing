@@ -10,5 +10,11 @@
         "help": "帮助",
         "donate": "捐赠",
         "language": "中文"
+    },
+    "status": {
+        "scale": "缩放",
+        "rotate": "旋转",
+        "size": "尺寸",
+        "cursor":"光标"
     }
 }

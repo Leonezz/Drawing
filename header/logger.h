@@ -1,3 +1,10 @@
+/**
+* author : Leonezz
+* discription :
+*	this file contains a class that writes logs.
+**/
+
+
 #pragma once
 #include <qobject.h>
 #include <QFile>

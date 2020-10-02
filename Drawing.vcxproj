@@ -86,23 +86,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="image_display_widget.cpp" />
-    <ClCompile Include="logger.cpp" />
-    <ClCompile Include="preloader.cpp" />
     <QtRcc Include="mainwindow.qrc" />
     <QtUic Include="mainwindow.ui" />
-    <QtMoc Include="mainwindow.h" />
-    <ClCompile Include="mainwindow.cpp" />
-    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="preloader.h" />
+    <QtMoc Include="header\image_display_widget.h" />
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="image_display_widget.h" />
+    <ClInclude Include="header\logger.h" />
+    <QtMoc Include="header\preloader.h" />
+    <QtMoc Include="header\mainwindow.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="logger.h" />
+    <ClCompile Include="src\image_display_widget.cpp" />
+    <ClCompile Include="src\logger.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\mainwindow.cpp" />
+    <ClCompile Include="src\preloader.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

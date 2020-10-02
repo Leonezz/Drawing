@@ -10,5 +10,11 @@
         "help": "help",
         "donate": "donate",
         "language": "English"
+    },
+    "status": {
+        "scale": "scale",
+        "rotate": "rotate",
+        "size": "size",
+        "cursor": "cursor"
     }
 }

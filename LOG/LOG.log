@@ -1,6 +1,0 @@
-
-[INFO   ][Time: 周四 10月 1 21:44:19 2020]MSG: this is an info msg
-[WARNING][Time: 周四 10月 1 21:44:19 2020]MSG: this is a warning msg
-[DEBUG  ][Time: 周四 10月 1 21:44:19 2020]MSG: this is a debug msg
-[ERROR  ][Time: 周四 10月 1 21:44:19 2020]MSG: this is an error msg
-[FATAL  ][Time: 周四 10月 1 21:44:19 2020]MSG: this is a fatal msg

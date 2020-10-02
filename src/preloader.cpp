@@ -1,4 +1,4 @@
-#include "preloader.h"
+#include "../header/preloader.h"
 const QString PreLoader::querry(const QString& key) const
 {
 	QStringList keys = key.split("->");

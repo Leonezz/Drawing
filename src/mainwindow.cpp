@@ -1,11 +1,12 @@
-#include "mainwindow.h"
-#include "logger.h"
+#include "../header/mainwindow.h"
+#include "../header/logger.h"
+
 MainWindow::MainWindow(QWidget* parent)
 	: QMainWindow(parent)
 {
 	ui.setupUi(this);
 
-	this->setWindowTitle("Drawingzhan");
+	this->setWindowTitle("Drawing");
 
 	this->preLoader_ = PreLoader::getInstance("zh_CN");
 	this->imageWidget_ = new ImageDisplayWidget();
@@ -17,6 +18,11 @@ MainWindow::MainWindow(QWidget* parent)
 		this, &MainWindow::fileMissingSlot);
 	QObject::connect(this->preLoader_, &PreLoader::jsonErrorSignal,
 		this, &MainWindow::jsonErrorSlot);
+	QObject::connect(this->imageWidget_, &ImageDisplayWidget::updateHorScrollBar,
+		this, &MainWindow::updateHorScrollBar);
+	QObject::connect(this->imageWidget_, &ImageDisplayWidget::updateVerScrollBar,
+		this, &MainWindow::updateVerScrollBar);
+
 
 	this->fileMenu_ = new QMenu();
 	this->openFileAction_ = new QAction();
@@ -28,30 +34,51 @@ MainWindow::MainWindow(QWidget* parent)
 	this->donateAction_ = new QAction();
 	this->languageAction_ = new QAction();
 	this->menuBar()->addActions({ this->helpAction_,this->donateAction_ ,this->languageAction_ });
+
+	this->labelScale_ = new QLabel;
+	this->labelScaleRatioNum_ = new QLabel;
+	this->labelRotation_ = new QLabel;
+	this->labelRotationNum_ = new QLabel;
+	this->labelPixmapSize_ = new QLabel;
+	this->labelPixmapSizeNum_ = new QLabel;
+	this->labelCursorPos_ = new QLabel;
+	this->labelCursorPosNum_ = new QLabel;
+	this->statusBar()->addWidget(labelCursorPos_);
+	this->statusBar()->addWidget(labelCursorPosNum_);
+	this->statusBar()->addWidget(labelPixmapSize_);
+	this->statusBar()->addWidget(labelPixmapSizeNum_);
+	this->statusBar()->addWidget(labelScale_);
+	this->statusBar()->addWidget(labelScaleRatioNum_);
+	this->statusBar()->addWidget(labelRotation_);
+	this->statusBar()->addWidget(labelRotationNum_);
+
+	//set mouse tracking so the mouseMoveEvent can work.
+
 	QObject::connect(this->openFileAction_, &QAction::triggered,
 		this, &MainWindow::openFileActionTriggered);
 	QObject::connect(this->languageAction_, &QAction::triggered,
 		this, &MainWindow::languageActionTriggered);
+	QObject::connect(this->imageWidget_, &ImageDisplayWidget::updateStatusBar,
+		this, &MainWindow::updateStatusBar);
 	this->renderUi("zh_CN");
-
-	Logger& logger = Logger::getInstance();
-	logger.info("this is an info msg");
-	logger.warning("this is a warning msg");
-	logger.debug("this is a debug msg");
-	logger.error("this is an error msg");
-	logger.fatal("this is a fatal msg");
-	
 }
 
 void MainWindow::fileMissingSlot(const QString& missingFile)
 {
+	Logger::getInstance().fatal("setting file missed.");
 	QMessageBox::critical(this, "Error", missingFile,
 		QMessageBox::Button::Close);
 	QApplication::exit();
 }
 
+void MainWindow::mouseMoveEvent(QMouseEvent* event)
+{
+	QWidget::mouseMoveEvent(event);
+}
+
 void MainWindow::jsonErrorSlot(const QString& error)
 {
+	Logger::getInstance().fatal("json error at the setting file.");
 	QMessageBox::critical(this, "Error", error,
 		QMessageBox::Button::Close);
 	QApplication::exit();
@@ -77,6 +104,33 @@ void MainWindow::languageActionTriggered()
 	else this->renderUi("zh_CN");
 }
 
+void MainWindow::updateStatusBar()
+{
+	this->labelScaleRatioNum_->setText(QString::number(this->imageWidget_->getScale()));
+	this->labelRotationNum_->setText(QString::number(this->imageWidget_->getRotationAngle()));
+	const QSize&& imgSize = this->imageWidget_->getSize();
+	QString sizeNumStr = QString::number(imgSize.width()) +
+		" x " + QString::number(imgSize.height());
+	this->labelPixmapSizeNum_->setText(sizeNumStr);
+
+	const QPoint& mousePos = this->imageWidget_->getMousePos();
+	QString mousePosNumStr = QString::number(mousePos.x()) +
+		" , " + QString::number(mousePos.y());
+	this->labelCursorPosNum_->setText(mousePosNumStr);
+}
+
+void MainWindow::updateVerScrollBar(const int val)
+{
+	int value = ui.scrollArea->verticalScrollBar()->value() - val;
+	this->ui.scrollArea->verticalScrollBar()->setValue(value);
+}
+
+void MainWindow::updateHorScrollBar(const int val)
+{
+	int value = ui.scrollArea->horizontalScrollBar()->value() - val;
+	this->ui.scrollArea->horizontalScrollBar()->setValue(value);
+}
+
 
 
 void MainWindow::renderUi(const QString& type)
@@ -89,5 +143,10 @@ void MainWindow::renderUi(const QString& type)
 	this->helpAction_->setText(this->preLoader_->querry("menu->help"));
 	this->donateAction_->setText(this->preLoader_->querry("menu->donate"));
 	this->languageAction_->setText(this->preLoader_->querry("menu->language"));
+
+	this->labelScale_->setText(this->preLoader_->querry("status->scale"));
+	this->labelRotation_->setText(this->preLoader_->querry("status->rotate"));
+	this->labelPixmapSize_->setText(this->preLoader_->querry("status->size"));
+	this->labelCursorPos_->setText(this->preLoader_->querry("status->cursor"));
 }
 
