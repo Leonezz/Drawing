@@ -6,10 +6,11 @@
 #include <QImageReader>
 #include <QScrollBar>
 #include <QMouseEvent>
-#include "image_display_widget.h"
+#include <QLabel>
+#include <QGraphicsView>
 #include "preloader.h"
 #include "ui_mainwindow.h"
-
+#include "GraphicsScene.h"
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -23,33 +24,33 @@ private slots:
 	void jsonErrorSlot(const QString& error);
 	void openFileActionTriggered();
 	void languageActionTriggered();
-	void updateStatusBar();
-	void updateVerScrollBar(const int val);
-	void updateHorScrollBar(const int val);
+	void updateStatusBar(const double scale, const QPointF mousePos, const QSize imageSize);
+	void changeCursorShape(const Qt::CursorShape shape);
 signals:
 	void loadImageSignal(const QString& fileName);
 private:
 	void renderUi(const QString& type);
 private:
-	PreLoader* preLoader_;
-	ImageDisplayWidget* imageWidget_;
+	PreLoader* m_preLoader;
+	QGraphicsView* m_view;
+	GraphicsScene* m_scene;
     Ui::MainWindowClass ui;
-	QMenu* fileMenu_;
-	QAction* openFileAction_;
-	QAction* saveAction_;
-	QAction* saveAsAction_;
+	QMenu* m_fileMenu;
+	QAction* m_openFileAction;
+	QAction* m_saveAction;
+	QAction* m_saveAsAction;
 
-	QAction* helpAction_;
-	QAction* donateAction_;
+	QAction* m_helpAction;
+	QAction* m_donateAction;
 
-	QAction* languageAction_;
+	QAction* m_languageAction;
 
-	QLabel* labelScale_;
-	QLabel* labelScaleRatioNum_;
-	QLabel* labelRotation_;
-	QLabel* labelRotationNum_;
-	QLabel* labelPixmapSize_;
-	QLabel* labelPixmapSizeNum_;
-	QLabel* labelCursorPos_;
-	QLabel* labelCursorPosNum_;
+	QLabel* m_labelScale;
+	QLabel* m_labelScaleRatioNum;
+	QLabel* m_labelRotation;
+	QLabel* m_labelRotationNum;
+	QLabel* m_labelPixmapSize;
+	QLabel* m_labelPixmapSizeNum;
+	QLabel* m_labelCursorPos;
+	QLabel* m_labelCursorPosNum;
 };

@@ -3,9 +3,11 @@ const QString PreLoader::querry(const QString& key) const
 {
 	QStringList keys = key.split("->");
 	QJsonObject obj = *preSetting_;
-	for (int i = 0; i < keys.length() - 1;++i) {
+	for (int i = 0; i < keys.length() - 1;++i)
+	{
 		QString k = keys[i];
-		if (!obj.keys().contains(k)) {
+		if (!obj.keys().contains(k)) 
+		{
 			emit jsonErrorSignal(QString("key %1 not contained").arg(k));
 			break;
 		}
@@ -21,7 +23,8 @@ PreLoader::PreLoader()
 	QFile jsonFile(fileName);
 	if (!jsonFile.open(QIODevice::ReadOnly))
 		emit fileMissingSignal(fileName);
-	else {
+	else 
+	{
 		QByteArray jsonData = jsonFile.readAll();
 		jsonFile.close();
 		QJsonParseError jsonError;
@@ -74,7 +77,8 @@ void PreLoader::setLanguage()
 }
 PreLoader* PreLoader::getInstance(const QString& type)
 {
-	if (type != type_) {
+	if (type != type_) 
+	{
 		type_ = type;
 		setLanguage();
 		delete instance_;

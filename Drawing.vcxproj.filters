@@ -32,13 +32,19 @@
     </QtUic>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="header\image_display_widget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="header\mainwindow.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="header\preloader.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="header\ImageGraphicsItem.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="header\BorderLine.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="header\GraphicsScene.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
@@ -46,11 +52,11 @@
     <ClInclude Include="header\logger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="header\RectAreaSelector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\image_display_widget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\logger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -63,5 +69,20 @@
     <ClCompile Include="src\preloader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\RectAreaSelector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GraphicsScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ImageGraphicsItem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BorderLine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>

@@ -7,59 +7,56 @@ MainWindow::MainWindow(QWidget* parent)
 	ui.setupUi(this);
 
 	this->setWindowTitle("Drawing");
-
-	this->preLoader_ = PreLoader::getInstance("zh_CN");
-	this->imageWidget_ = new ImageDisplayWidget();
-	this->ui.scrollArea->setWidget(imageWidget_);
-	this->ui.scrollArea->setWidgetResizable(true);
-	QObject::connect(this, &MainWindow::loadImageSignal,
-		this->imageWidget_, &ImageDisplayWidget::loadImageFromFile);
-	QObject::connect(this->preLoader_, &PreLoader::fileMissingSignal,
+	this->m_preLoader = PreLoader::getInstance("zh_CN");
+	QObject::connect(this->m_preLoader, &PreLoader::fileMissingSignal,
 		this, &MainWindow::fileMissingSlot);
-	QObject::connect(this->preLoader_, &PreLoader::jsonErrorSignal,
+	QObject::connect(this->m_preLoader, &PreLoader::jsonErrorSignal,
 		this, &MainWindow::jsonErrorSlot);
-	QObject::connect(this->imageWidget_, &ImageDisplayWidget::updateHorScrollBar,
-		this, &MainWindow::updateHorScrollBar);
-	QObject::connect(this->imageWidget_, &ImageDisplayWidget::updateVerScrollBar,
-		this, &MainWindow::updateVerScrollBar);
 
-
-	this->fileMenu_ = new QMenu();
-	this->openFileAction_ = new QAction();
-	this->saveAction_ = new QAction();
-	this->saveAsAction_ = new QAction();
-	this->fileMenu_->addActions({ this->openFileAction_,this->saveAction_,this->saveAsAction_ });
-	this->menuBar()->addMenu(fileMenu_);
-	this->helpAction_ = new QAction();
-	this->donateAction_ = new QAction();
-	this->languageAction_ = new QAction();
-	this->menuBar()->addActions({ this->helpAction_,this->donateAction_ ,this->languageAction_ });
-
-	this->labelScale_ = new QLabel;
-	this->labelScaleRatioNum_ = new QLabel;
-	this->labelRotation_ = new QLabel;
-	this->labelRotationNum_ = new QLabel;
-	this->labelPixmapSize_ = new QLabel;
-	this->labelPixmapSizeNum_ = new QLabel;
-	this->labelCursorPos_ = new QLabel;
-	this->labelCursorPosNum_ = new QLabel;
-	this->statusBar()->addWidget(labelCursorPos_);
-	this->statusBar()->addWidget(labelCursorPosNum_);
-	this->statusBar()->addWidget(labelPixmapSize_);
-	this->statusBar()->addWidget(labelPixmapSizeNum_);
-	this->statusBar()->addWidget(labelScale_);
-	this->statusBar()->addWidget(labelScaleRatioNum_);
-	this->statusBar()->addWidget(labelRotation_);
-	this->statusBar()->addWidget(labelRotationNum_);
-
-	//set mouse tracking so the mouseMoveEvent can work.
-
-	QObject::connect(this->openFileAction_, &QAction::triggered,
-		this, &MainWindow::openFileActionTriggered);
-	QObject::connect(this->languageAction_, &QAction::triggered,
-		this, &MainWindow::languageActionTriggered);
-	QObject::connect(this->imageWidget_, &ImageDisplayWidget::updateStatusBar,
+	this->m_scene = new GraphicsScene;
+	this->m_view = new QGraphicsView(m_scene);
+	this->setCentralWidget(m_view);
+	this->m_view->setMouseTracking(true);
+	this->m_view->showMaximized();
+	
+	QObject::connect(this, &MainWindow::loadImageSignal,
+		this->m_scene, &GraphicsScene::loadPixmapFromFile);
+	QObject::connect(this->m_scene, &GraphicsScene::mainWindowChangeCursorShape,
+		this, &MainWindow::changeCursorShape);
+	QObject::connect(this->m_scene, &GraphicsScene::sendStatusInfo,
 		this, &MainWindow::updateStatusBar);
+	this->m_fileMenu = new QMenu();
+	this->m_openFileAction = new QAction();
+	this->m_saveAction = new QAction();
+	this->m_saveAsAction = new QAction();
+	this->m_fileMenu->addActions({ this->m_openFileAction,this->m_saveAction,this->m_saveAsAction });
+	this->menuBar()->addMenu(m_fileMenu);
+	this->m_helpAction = new QAction();
+	this->m_donateAction = new QAction();
+	this->m_languageAction = new QAction();
+	this->menuBar()->addActions({ this->m_helpAction,this->m_donateAction ,this->m_languageAction });
+
+	this->m_labelScale = new QLabel;
+	this->m_labelScaleRatioNum = new QLabel;
+	this->m_labelRotation = new QLabel;
+	this->m_labelRotationNum = new QLabel;
+	this->m_labelPixmapSize = new QLabel;
+	this->m_labelPixmapSizeNum = new QLabel;
+	this->m_labelCursorPos = new QLabel;
+	this->m_labelCursorPosNum = new QLabel;
+	this->statusBar()->addWidget(m_labelCursorPos);
+	this->statusBar()->addWidget(m_labelCursorPosNum);
+	this->statusBar()->addWidget(m_labelPixmapSize);
+	this->statusBar()->addWidget(m_labelPixmapSizeNum);
+	this->statusBar()->addWidget(m_labelScale);
+	this->statusBar()->addWidget(m_labelScaleRatioNum);
+	this->statusBar()->addWidget(m_labelRotation);
+	this->statusBar()->addWidget(m_labelRotationNum);
+
+	QObject::connect(this->m_openFileAction, &QAction::triggered,
+		this, &MainWindow::openFileActionTriggered);
+	QObject::connect(this->m_languageAction, &QAction::triggered,
+		this, &MainWindow::languageActionTriggered);
 	this->renderUi("zh_CN");
 }
 
@@ -98,55 +95,42 @@ void MainWindow::openFileActionTriggered()
 
 void MainWindow::languageActionTriggered()
 {
-	const QString language = this->languageAction_->text();
-	if (language == "中文")
+	const QString language = this->m_languageAction->text();
+	if (language == "����")
 		this->renderUi("en");
 	else this->renderUi("zh_CN");
 }
 
-void MainWindow::updateStatusBar()
+void MainWindow::updateStatusBar(const double scale, const QPointF mousePos, const QSize imageSize)
 {
-	this->labelScaleRatioNum_->setText(QString::number(this->imageWidget_->getScale()));
-	this->labelRotationNum_->setText(QString::number(this->imageWidget_->getRotationAngle()));
-	const QSize&& imgSize = this->imageWidget_->getSize();
-	QString sizeNumStr = QString::number(imgSize.width()) +
-		" x " + QString::number(imgSize.height());
-	this->labelPixmapSizeNum_->setText(sizeNumStr);
-
-	const QPoint& mousePos = this->imageWidget_->getMousePos();
-	QString mousePosNumStr = QString::number(mousePos.x()) +
-		" , " + QString::number(mousePos.y());
-	this->labelCursorPosNum_->setText(mousePosNumStr);
+	this->m_labelScaleRatioNum->setText(QString::number(scale));
+	this->m_labelCursorPosNum->setText(QString::number(mousePos.x())
+		+ "," + QString::number(mousePos.y()));
+	this->m_labelPixmapSizeNum->setText(QString::number(imageSize.width())
+		+ "x" + QString::number(imageSize.height()));
 }
 
-void MainWindow::updateVerScrollBar(const int val)
+void MainWindow::changeCursorShape(const Qt::CursorShape shape)
 {
-	int value = ui.scrollArea->verticalScrollBar()->value() - val;
-	this->ui.scrollArea->verticalScrollBar()->setValue(value);
-}
-
-void MainWindow::updateHorScrollBar(const int val)
-{
-	int value = ui.scrollArea->horizontalScrollBar()->value() - val;
-	this->ui.scrollArea->horizontalScrollBar()->setValue(value);
+	this->setCursor(shape);
 }
 
 
 
 void MainWindow::renderUi(const QString& type)
 {
-	this->preLoader_ = PreLoader::getInstance(type);
-	this->fileMenu_->setTitle(this->preLoader_->querry("menu->file->value"));
-	this->openFileAction_->setText(this->preLoader_->querry("menu->file->open"));
-	this->saveAction_->setText(this->preLoader_->querry("menu->file->save"));
-	this->saveAsAction_->setText(this->preLoader_->querry("menu->file->saveAs"));
-	this->helpAction_->setText(this->preLoader_->querry("menu->help"));
-	this->donateAction_->setText(this->preLoader_->querry("menu->donate"));
-	this->languageAction_->setText(this->preLoader_->querry("menu->language"));
+	this->m_preLoader = PreLoader::getInstance(type);
+	this->m_fileMenu->setTitle(this->m_preLoader->querry("menu->file->value"));
+	this->m_openFileAction->setText(this->m_preLoader->querry("menu->file->open"));
+	this->m_saveAction->setText(this->m_preLoader->querry("menu->file->save"));
+	this->m_saveAsAction->setText(this->m_preLoader->querry("menu->file->saveAs"));
+	this->m_helpAction->setText(this->m_preLoader->querry("menu->help"));
+	this->m_donateAction->setText(this->m_preLoader->querry("menu->donate"));
+	this->m_languageAction->setText(this->m_preLoader->querry("menu->language"));
 
-	this->labelScale_->setText(this->preLoader_->querry("status->scale"));
-	this->labelRotation_->setText(this->preLoader_->querry("status->rotate"));
-	this->labelPixmapSize_->setText(this->preLoader_->querry("status->size"));
-	this->labelCursorPos_->setText(this->preLoader_->querry("status->cursor"));
+	this->m_labelScale->setText(this->m_preLoader->querry("status->scale"));
+	this->m_labelRotation->setText(this->m_preLoader->querry("status->rotate"));
+	this->m_labelPixmapSize->setText(this->m_preLoader->querry("status->size"));
+	this->m_labelCursorPos->setText(this->m_preLoader->querry("status->cursor"));
 }
 

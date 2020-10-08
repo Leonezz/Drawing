@@ -43,9 +43,16 @@
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <IncludePath>C:\Qt\5.15.0\msvc2019_64\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
   </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile />
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Qt\5.15.0\msvc2019_64\include\QtGui;C:\Qt\5.15.0\msvc2019_64\include\QtWidgets;C:\Qt\5.15.0\msvc2019_64\include\QtCore;C:\Qt\5.15.0\msvc2019_64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
     <QtInstall>msvc2019_64</QtInstall>
     <QtModules>core;gui;widgets</QtModules>
@@ -90,19 +97,26 @@
     <QtUic Include="mainwindow.ui" />
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="header\image_display_widget.h" />
-  </ItemGroup>
-  <ItemGroup>
+    <QtMoc Include="header\BorderLine.h" />
+    <QtMoc Include="header\GraphicsScene.h" />
+    <QtMoc Include="header\ImageGraphicsItem.h" />
     <ClInclude Include="header\logger.h" />
+    <ClInclude Include="header\RectAreaSelector.h" />
     <QtMoc Include="header\preloader.h" />
     <QtMoc Include="header\mainwindow.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\image_display_widget.cpp" />
+    <ClCompile Include="src\BorderLine.cpp" />
+    <ClCompile Include="src\GraphicsScene.cpp" />
+    <ClCompile Include="src\ImageGraphicsItem.cpp" />
     <ClCompile Include="src\logger.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mainwindow.cpp" />
     <ClCompile Include="src\preloader.cpp" />
+    <ClCompile Include="src\RectAreaSelector.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
